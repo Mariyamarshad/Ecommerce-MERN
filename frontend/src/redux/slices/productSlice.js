@@ -11,7 +11,7 @@ export const fetchProducts = createAsyncThunk(
         url: summaryApi.getProducts.url,
         method: summaryApi.getProducts.method,
       });
-      return response.data;
+      return response.data; // { success, products }
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to fetch products");
     }
@@ -28,7 +28,7 @@ export const createProduct = createAsyncThunk(
         method: summaryApi.createProduct.method,
         data: productData,
       });
-      return response.data;
+      return response.data.product; // only return the product object
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to create product");
     }
@@ -61,7 +61,7 @@ const productsSlice = createSlice({
 
       // Create
       .addCase(createProduct.fulfilled, (state, action) => {
-        state.items.push(action.payload);
+        state.items.push(action.payload); // now this is just the product
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.error = action.payload;

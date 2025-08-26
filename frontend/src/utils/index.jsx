@@ -1,4 +1,4 @@
-const backendDomain = "http://localhost:8000";
+const backendDomain = import.meta.env.VITE_BACKEND_URL;
 
 const summaryApi = {
   // Auth APIs
