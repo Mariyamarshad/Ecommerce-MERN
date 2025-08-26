@@ -35,13 +35,13 @@ const AdminProductForm = ({ onProductAdded }) => {
     await axios({
       url: summaryApi.createProduct.url,
       method: summaryApi.createProduct.method,
-      data: form, // ✅ fixed here
+      data: form, 
       headers: { "Content-Type": "multipart/form-data" },
     });
 
     alert("Product added successfully!");
 
-    // ✅ Refresh product list in parent
+    //  Refresh product list 
     onProductAdded?.();
 
     // Reset form
@@ -111,7 +111,7 @@ const AdminProductForm = ({ onProductAdded }) => {
         className="w-full border p-2 rounded"
         accept="image/*"
       />
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+      <button type="submit" className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-all">
         Add Product
       </button>
     </form>

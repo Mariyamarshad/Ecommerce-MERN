@@ -35,6 +35,39 @@ export const createProduct = createAsyncThunk(
   }
 );
 
+//delete product
+export const deleteProduct = createAsyncThunk(
+  "products/deleteProduct",
+  async (id, { rejectWithValue }) => {
+    try {
+      await axios({
+        url: `${summaryApi.deleteProduct.url}/${_id}`,
+        method: summaryApi.deleteProduct.method,
+      });
+      return id; 
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to delete product");
+    }
+  }
+);
+
+// Update product
+export const updateProduct = createAsyncThunk(
+  "products/updateProduct",
+  async ({ id, updatedData }, { rejectWithValue }) => {
+    try {
+      const res = await axios({
+        url: `${summaryApi.updateProduct.url}/${_id}`, 
+        method: summaryApi.updateProduct.method,
+        data: updatedData,
+      });
+      return res.data.product; 
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to update product");
+    }
+  }
+);
+
 const productsSlice = createSlice({
   name: "products",
   initialState: {
@@ -59,6 +92,17 @@ const productsSlice = createSlice({
         state.error = action.payload;
       })
 
+      // Delete
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.items = state.items.filter((p) => p._id !== action.payload);
+      })
+
+      // Update
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.items = state.items.map((p) =>
+          p._id === action.payload._id ? action.payload : p
+        );
+      })
       // Create
       .addCase(createProduct.fulfilled, (state, action) => {
         state.items.push(action.payload); // now this is just the product

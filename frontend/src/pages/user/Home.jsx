@@ -20,7 +20,6 @@ const Home = () => {
 
   return (
     <div className="flex flex-col min-h-screen mt-20">
-      {/* Hero Section */}
       <Hero />
 
       <div className="flex flex-col items-center justify-center flex-1 w-full">

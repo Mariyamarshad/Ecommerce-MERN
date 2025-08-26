@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const navigate = useNavigate(); // lowercase and const
+  const navigate = useNavigate(); 
 
   const handleLogout = () => {
     dispatch(logout());
