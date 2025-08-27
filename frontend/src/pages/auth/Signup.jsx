@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signupUser } from "../../redux/slices/authSlice";
+import { resetSignupSuccess, signupUser } from "../../redux/slices/authSlice";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -53,8 +53,11 @@ const SignUp = () => {
   // If signup successful, navigate to login
   useEffect(() => {
     if (signupSuccess) {
-      setMessage("Signup successful! Redirecting...");
-      setTimeout(() => navigate("/login"), 1500);
+      setMessage("Signup successful!");
+      setTimeout(() => {
+        navigate("/login");
+        dispatch(resetSignupSuccess());
+      }, 1500);
     }
   }, [signupSuccess, navigate]);
 

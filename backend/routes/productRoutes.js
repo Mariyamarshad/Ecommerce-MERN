@@ -6,6 +6,9 @@ const upload = require("../middlewares/upload");
 // Get all products
 router.get("/", productController.getAllProducts);
 
+// Get single product
+router.get("/:id", productController.getProductById);
+
 // Create product (with image upload)
 router.post("/", upload.single("image"), productController.createProduct);
 

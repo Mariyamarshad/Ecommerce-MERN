@@ -4,6 +4,9 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const Authrouter = require("./routes/AuthRouter");
 const productRoutes = require("./routes/productRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes")
+const usersRoutes = require("./routes/usersRoutes")
+
 
 const app = express();
 
@@ -14,6 +17,8 @@ app.use(express.json());
 // Routes
 app.use("/auth", Authrouter);
 app.use("/api/products", productRoutes);
+app.use("/api/dashboard", dashboardRoutes)
+app.use("/api/users", usersRoutes)
 
 // Static folder for images
 app.use("/uploads", express.static("uploads"));

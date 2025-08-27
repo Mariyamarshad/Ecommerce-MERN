@@ -15,6 +15,7 @@ import Orders from "../pages/admin/AdminOrders"
 // Layouts
 import UserLayout from "../components/Layouts/UserLayout";
 import AdminLayout from "../components/Layouts/AdminLayout";
+import ProductDetails from "../components/Home/ProductDetails";
 
 const AppRoutes = () => {
   return (
@@ -24,6 +25,8 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/sign-up" element={<Signup />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        
       </Route>
 
       {/* Admin routes */}
