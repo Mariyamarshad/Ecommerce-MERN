@@ -1,5 +1,21 @@
 import React, { useState, useRef } from "react";
-import { Camera, Monitor, Smartphone, Headphones, Watch, Gamepad2, ChevronLeft, ChevronRight, Shirt, Home, Dumbbell, Sofa, ShoppingBag, Book } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import {
+  Camera,
+  Monitor,
+  Smartphone,
+  Headphones,
+  Watch,
+  Gamepad2,
+  ChevronLeft,
+  ChevronRight,
+  Shirt,
+  Home,
+  Dumbbell,
+  Sofa,
+  ShoppingBag,
+  Book,
+} from "lucide-react";
 
 const categories = [
   { id: 1, name: "Phones", icon: Smartphone },
@@ -8,17 +24,18 @@ const categories = [
   { id: 4, name: "Camera", icon: Camera },
   { id: 5, name: "Headphones", icon: Headphones },
   { id: 6, name: "Gaming", icon: Gamepad2 },
-  { id: 7, name: "Shopping", icon: Shirt},
-  { id: 8, name: "Home Appliances", icon: Home},
-  { id: 9, name: "Fitness", icon: Dumbbell},
-  { id: 10, name: "Furniture", icon: Sofa},
-  { id: 11, name: "Groceries", icon: ShoppingBag},
-  { id: 12, name: "Books", icon: Book},
+  { id: 7, name: "Shopping", icon: Shirt },
+  { id: 8, name: "Home Appliances", icon: Home },
+  { id: 9, name: "Fitness", icon: Dumbbell },
+  { id: 10, name: "Furniture", icon: Sofa },
+  { id: 11, name: "Groceries", icon: ShoppingBag },
+  { id: 12, name: "Books", icon: Book },
 ];
 
 const Categories = () => {
   const [active, setActive] = useState(null);
   const scrollRef = useRef(null);
+  const navigate = useNavigate();
 
   const scrollLeft = () => {
     scrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
@@ -28,8 +45,13 @@ const Categories = () => {
     scrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
   };
 
+  const handleCategoryClick = (cat) => {
+    setActive(cat.id);
+    navigate(`/category/${cat.name.toLowerCase()}`);
+  };
+
   return (
-    <section className="w-full max-w-screen-xl mx-auto my-16 px-4">
+    <section className="w-full max-w-screen-xl mx-auto my-16 px-4 ">
       {/* Section Header */}
       <div className="mb-10 flex justify-between items-center">
         <div>
@@ -65,7 +87,7 @@ const Categories = () => {
           return (
             <div
               key={cat.id}
-              onClick={() => setActive(cat.id)}
+              onClick={() => handleCategoryClick(cat)}
               className={`group flex-shrink-0 w-40 h-32 flex flex-col items-center justify-center rounded-2xl border-2 transition-all duration-300 cursor-pointer bg-white 
                 ${
                   isActive

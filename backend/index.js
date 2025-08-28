@@ -6,6 +6,7 @@ const Authrouter = require("./routes/AuthRouter");
 const productRoutes = require("./routes/productRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes")
 const usersRoutes = require("./routes/usersRoutes")
+const cartRoutes = require("./routes/cartRoutes")
 
 
 const app = express();
@@ -19,6 +20,7 @@ app.use("/auth", Authrouter);
 app.use("/api/products", productRoutes);
 app.use("/api/dashboard", dashboardRoutes)
 app.use("/api/users", usersRoutes)
+app.use("/api/cart", cartRoutes);
 
 // Static folder for images
 app.use("/uploads", express.static("uploads"));

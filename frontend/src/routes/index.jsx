@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/user/Home";
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
+import CategoryPage from "../pages/user/CategoryPage";
 
 // Admin pages
 import AdminDashboard from "../pages/admin/AdminDashboard";
@@ -26,6 +27,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/product/:id" element={<ProductDetails />} />
+         <Route path="/category/:category" element={<CategoryPage />} />
         
       </Route>
 

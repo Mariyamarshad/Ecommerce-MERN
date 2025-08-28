@@ -1,8 +1,21 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../redux/slices/authSlice";
+import { toast } from "react-toastify";
 
 const UserNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    toast.success("You have been logged out!");
+    navigate("/login");
+  };
 
   return (
     <>
@@ -38,12 +51,21 @@ const UserNavbar = () => {
               >
                 About
               </Link>
-              <Link
-                to="/login"
-                className="text-gray-700 hover:text-gray-900 font-medium transition"
-              >
-                Login
-              </Link>
+              {!token ? (
+                <Link
+                  to="/login"
+                  className="text-gray-700 hover:text-gray-900 font-medium transition"
+                >
+                  Login
+                </Link>
+              ) : (
+                <button
+                  onClick={handleLogout}
+                  className="text-red-600 hover:text-red-800 font-medium transition"
+                >
+                  Logout
+                </button>
+              )}
             </div>
 
             {/* Search + Icons (hidden on small screens) */}
@@ -154,18 +176,39 @@ const UserNavbar = () => {
           {/* Mobile menu */}
           {menuOpen && (
             <div className="md:hidden px-4 pb-4 space-y-2">
-              <Link to="/" className="block text-gray-700 hover:text-indigo-600">
+              <Link
+                to="/"
+                className="block text-gray-700 hover:text-indigo-600"
+              >
                 Home
               </Link>
-              <Link to="/contact" className="block text-gray-700 hover:text-indigo-600">
+              <Link
+                to="/contact"
+                className="block text-gray-700 hover:text-indigo-600"
+              >
                 Contact
               </Link>
-              <Link to="/about" className="block text-gray-700 hover:text-indigo-600">
+              <Link
+                to="/about"
+                className="block text-gray-700 hover:text-indigo-600"
+              >
                 About
               </Link>
-              <Link to="/login" className="block text-gray-700 hover:text-indigo-600">
-                Login
-              </Link>
+              {!token ? (
+                <Link
+                  to="/login"
+                  className="block text-gray-700 hover:text-indigo-600"
+                >
+                  Login
+                </Link>
+              ) : (
+                <button
+                  onClick={handleLogout}
+                  className="block text-red-600 hover:text-red-800"
+                >
+                  Logout
+                </button>
+              )}
 
               {/* Mobile Search */}
               <div className="relative mt-3">

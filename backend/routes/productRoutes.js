@@ -9,6 +9,9 @@ router.get("/", productController.getAllProducts);
 // Get single product
 router.get("/:id", productController.getProductById);
 
+//Get product by category
+router.get("/category/:category", productController.getProductByCategory)
+
 // Create product (with image upload)
 router.post("/", upload.single("image"), productController.createProduct);
 

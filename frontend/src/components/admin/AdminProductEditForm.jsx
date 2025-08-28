@@ -77,15 +77,27 @@ const AdminProductEditForm = ({ product, onClose, onProductUpdated }) => {
           className="w-full border p-2 rounded"
           required
         />
-        <input
-          type="text"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          placeholder="Category"
-          className="w-full border p-2 rounded"
-          required
-        />
+        <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="w-full mt-1 border p-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+            required
+          >
+            <option value="">-- Select Category --</option>
+            <option value="phones">Phones</option>
+            <option value="computers">Computers</option>
+            <option value="smartWatch">SmartWatch</option>
+            <option value="camera">Camera</option>
+            <option value="headphones">Headphones</option>
+            <option value="gaming">Gaming</option>
+            <option value="shopping">Shopping</option>
+            <option value="Home">Home Appliances</option>
+            <option value="fitness">Fitness</option>
+            <option value="furniture">Furniture</option>
+            <option value="groceries">Groceries</option>
+            <option value="books">Books</option>
+          </select>
         <input
           type="number"
           name="stock"

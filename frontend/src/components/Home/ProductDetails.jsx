@@ -1,10 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import summaryApi from "../../utils";
+import apiCaller from "../../utils/apiCaller";
+import { Link } from "react-router-dom";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("You need to login first!")
+      Navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await apiCaller({
+        url: summaryApi.addToCart.url,
+        method: summaryApi.addToCart.method,
+        data: { productId: product._id, quantity: 1},
+      });
+
+      alert(response.message || "Added to cart!");
+    } catch (error) {
+      alert(err.message || "Please login first!");
+    }
+  }
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -37,7 +62,7 @@ const ProductDetails = () => {
           <p className="text-red-600 font-bold text-2xl mt-4">
             Rs. {product.price}
           </p>
-          <button className="mt-6 bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+          <button onClick={handleAddToCart} className="mt-6 bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
             Add to Cart
           </button>
         </div>

@@ -1,38 +1,63 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import summaryApi from "../../utils";
+import apiCaller from "../../utils/apiCaller";
 
 const ProductCard = ({ product }) => {
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("You need to login first!");
+      Navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await apiCaller({
+        url: summaryApi.addToCart.url,
+        method: summaryApi.addToCart.method,
+        data: { productId: product._id, quantity: 1 },
+      });
+
+      alert(response.message || "Added to Cart!");
+    } catch (error) {
+      alert(error.message || "Please login first!");
+    }
+  };
+
   return (
-    <div className="group border rounded-2xl bg-white shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer">
-      {/* product image */}
-      <div className="relative">
+    <div className="group border rounded-lg bg-white shadow hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer">
+      {/* image */}
+      <div className="relative w-full h-36 bg-gray-50 flex items-center justify-center overflow-hidden">
         {product.image && (
           <img
             src={`${import.meta.env.VITE_BACKEND_URL}${product.image}`}
             alt={product.name}
-            className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-contain h-full w-full group-hover:scale-105 transition-transform duration-300"
           />
         )}
-       
       </div>
-      {/*product Details */}
-      <div className="p-4">
-        <h3 className="font-semibold text-lg truncate">{product.name}</h3>
-        <p className="text-gray-500 text-sm line-clamp-2">
+
+      {/* content */}
+      <div className="p-3">
+        <h3 className="font-semibold text-sm truncate">{product.name}</h3>
+        <p className="text-gray-500 text-xs line-clamp-2">
           {product.description}
         </p>
 
-        {/*Price & button */}
-        <div className="flex items-center justify-between mt-3">
-          <p className="text-red-600 font-bold text-lg">Rs. {product.price}</p>
+        <div className="flex items-center justify-between mt-2">
+          <p className="text-red-600 font-bold text-sm">Rs. {product.price}</p>
           <div className="flex gap-2">
-            <button className="bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 transition text-sm">
+            <button
+              onClick={handleAddToCart}
+              className="bg-red-600 text-white px-2 py-1 rounded text-xs hover:bg-red-700 transition"
+            >
               Add to Cart
             </button>
-            {/* View Details Button */}
             <Link
               to={`/product/${product._id}`}
-              className="border border-gray-300 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-100"
+              className="border border-gray-300 px-2 py-1 rounded text-xs hover:bg-gray-100 transition"
             >
               View
             </Link>

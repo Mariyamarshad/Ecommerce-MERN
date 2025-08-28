@@ -28,6 +28,25 @@ const summaryApi = {
     url: `${backendDomain}/api/products/${id}`,
     method: "delete",
   }),
+
+  // Cart APIs
+  addToCart: {
+    url: `${backendDomain}/api/cart/add`,
+    method: "post",
+  },
+  getCart: {
+    url: `${backendDomain}/api/cart`,
+    method: "get",
+  },
+  updateCartItem: (id) => ({
+    url: `${backendDomain}/api/cart/${id}`,
+    method: "put",
+  }),
+  deleteCartItem: (id) => ({
+    url: `${backendDomain}/api/cart/${id}`,
+    method: "delete",
+  }),
 };
 
 export default summaryApi;
+ 

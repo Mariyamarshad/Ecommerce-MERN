@@ -23,6 +23,17 @@ exports.getProductById = async (req, res) => {
   }
 };
 
+//Get product by category
+exports.getProductByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const products = await Product.find({ category: category.toLowerCase() });
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching products", error });
+  }
+}
+
 
 // CREATE product
 exports.createProduct = async (req, res) => {

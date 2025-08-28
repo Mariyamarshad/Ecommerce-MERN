@@ -36,7 +36,7 @@ const Home = () => {
         <Categories />
 
         {/* ✅ Product List */}
-        {loading && <p className="text-blue-500">Loading products...</p>}
+        {loading && <p className="text-blue-500 ">Loading products...</p>}
         {error && <p className="text-red-500">Error: {error}</p>}
         {!loading && !error && <ProductList products={items} />}
       </div>
