@@ -17,6 +17,7 @@ import Orders from "../pages/admin/AdminOrders"
 import UserLayout from "../components/Layouts/UserLayout";
 import AdminLayout from "../components/Layouts/AdminLayout";
 import ProductDetails from "../components/Home/ProductDetails";
+import CartPage from "../pages/user/cart";
 
 const AppRoutes = () => {
   return (
@@ -28,6 +29,8 @@ const AppRoutes = () => {
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/product/:id" element={<ProductDetails />} />
          <Route path="/category/:category" element={<CategoryPage />} />
+         <Route path="/cart-page" element={<CartPage />} />
+         
         
       </Route>
 

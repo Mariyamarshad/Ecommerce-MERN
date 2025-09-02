@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import summaryApi from "../../utils";
 import apiCaller from "../../utils/apiCaller";
+import summaryApi from "../../Utils";
 
 const ProductCard = ({ product }) => {
   const handleAddToCart = async () => {

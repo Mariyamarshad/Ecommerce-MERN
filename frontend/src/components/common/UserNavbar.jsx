@@ -123,7 +123,7 @@ const UserNavbar = () => {
 
               {/* Cart */}
               <Link
-                to="/cart"
+                to="/cart-page"
                 className="text-gray-700 hover:text-gray-900 transition"
               >
                 <svg

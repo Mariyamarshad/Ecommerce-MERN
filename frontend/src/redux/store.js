@@ -1,22 +1,29 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../redux/slices/authSlice"
-import productsReducer from "../redux/slices/productSlice"
-import storage from "redux-persist/lib/storage"
-import { persistStore, persistReducer} from "redux-persist";
+import authReducer from "../redux/slices/authSlice";
+import productsReducer from "../redux/slices/productSlice";
+import cartReducer from "../redux/slices/cartSlice"; // 👈 add this
+import storage from "redux-persist/lib/storage";
+import { persistStore, persistReducer } from "redux-persist";
 
+// --- Persist Config for Auth (already working)
 const persistConfig = {
-    key: "root",
-    storage,
-}
+  key: "auth",
+  storage,
+};
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 
- const store = configureStore({
-    reducer: {
-        auth: persistedAuthReducer,
-        products: productsReducer,
-    }
-})
+const store = configureStore({
+  reducer: {
+    auth: persistedAuthReducer,
+    products: productsReducer,
+    cart: cartReducer, // 👈 add cart slice here
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false, // needed when using redux-persist
+    }),
+});
 
 export const persistor = persistStore(store);
 export default store;
