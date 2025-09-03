@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import summaryApi from "../../utils";
-import { X } from "lucide-react"; // cross icon
+import { X } from "lucide-react"; 
 
 const AdminProductForm = ({ onProductAdded, onClose }) => {
   const [formData, setFormData] = useState({
@@ -38,7 +38,7 @@ const AdminProductForm = ({ onProductAdded, onClose }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("✅ Product added successfully!");
+      alert(" Product added successfully!");
       onProductAdded?.();
 
       // Reset form
@@ -47,13 +47,13 @@ const AdminProductForm = ({ onProductAdded, onClose }) => {
       setPreview(null);
     } catch (error) {
       console.error("Failed to add product", error);
-      alert("❌ Failed to add product");
+      alert(" Failed to add product");
     }
   };
 
   return (
     <div className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow-md mt-10 relative">
-      {/* ❌ Cancel Button */}
+      {/*  Cancel Button */}
       <button
         type="button"
         onClick={onClose}
@@ -95,7 +95,7 @@ const AdminProductForm = ({ onProductAdded, onClose }) => {
         {/* Price & Stock */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Price ($)</label>
+            <label className="block text-sm font-medium text-gray-700">Price (Rs)</label>
             <input
               type="number"
               name="price"

@@ -6,6 +6,7 @@ const AdminDashboard = () => {
   const [count, setCount] = useState({
     users: 0,
     products: 0,
+    orders: 0,
   });
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const AdminDashboard = () => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <DashboardCard title="Users" count={count.users}  />
       <DashboardCard title="Products" count={count.products} />
-      <DashboardCard title="Orders" count={0} />
+      <DashboardCard title="Orders" count={count.orders} />
     </div>
   );
 };

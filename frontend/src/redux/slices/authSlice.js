@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import summaryApi from "../../utils";
+import summaryApi from "../../Utils";
 
 // Login
 export const loginUser = createAsyncThunk(
@@ -44,6 +44,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      localStorage.removeItem("token");
     },
     setUser: (state, action) => {
       state.user = action.payload.user;

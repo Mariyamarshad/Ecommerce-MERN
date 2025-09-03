@@ -2,8 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import apiCaller from "../../utils/apiCaller";
 import summaryApi from "../../Utils";
+import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
+  const Navigate= useNavigate();
   const handleAddToCart = async () => {
     const token = localStorage.getItem("token");
 

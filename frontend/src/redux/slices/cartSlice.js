@@ -1,4 +1,3 @@
-// frontend/src/redux/slices/cartSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import summaryApi from "../../Utils/index";
 import apiCaller from "../../utils/apiCaller";
@@ -35,7 +34,6 @@ export const removeCartItem = createAsyncThunk("cart/removeCartItem", async (id)
   return res;
 });
 
-// ✅ Slice
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
@@ -43,7 +41,11 @@ const cartSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    clearCart: (state) => {
+      state.items = [];
+    }
+  },
   extraReducers: (builder) => {
     builder
       // fetchCart
@@ -61,7 +63,7 @@ const cartSlice = createSlice({
 
       // addToCart
       .addCase(addToCart.fulfilled, (state, action) => {
-        state.items = action.payload;
+        state.items = action.payload.items || state.items;
       })
 
       // updateCartItem
@@ -76,4 +78,5 @@ const cartSlice = createSlice({
   },
 });
 
+export const { clearCart} = cartSlice.actions;
 export default cartSlice.reducer;

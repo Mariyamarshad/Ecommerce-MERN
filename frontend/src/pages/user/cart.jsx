@@ -6,16 +6,19 @@ import {
 } from "../../redux/slices/cartSlice";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import { Trash2, Plus, Minus } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const CartPage = () => {
   const dispatch = useDispatch();
   const { items, loading } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(fetchCart());
-  }, [dispatch]);
+    if (user) {
+          dispatch(fetchCart());
+    }
+  }, [dispatch, user]);
 
   const handleIncrease = (id, qty) => {
     dispatch(updateCartItem({ id, quantity: qty + 1 }));
@@ -31,23 +34,36 @@ const CartPage = () => {
     dispatch(removeCartItem(id));
   };
 
-  if (loading) return <p className="text-center text-lg">Loading cart...</p>;
+  if (loading)
+    return <p className="text-center text-lg mt-40">Loading your cart...</p>;
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 mt-36">
-      <h2 className="text-3xl font-bold mb-6">Your Shopping Cart 🛒</h2>
+    <div className="max-w-6xl mx-auto px-6 py-12 mt-36">
+      <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
+        <ShoppingCart size={28} className="text-red-600" />
+        Your Shopping Cart
+      </h2>
 
       {items.length === 0 ? (
-        <p className="text-gray-600 text-lg">Your cart is empty.</p>
+        <div className="text-center py-20 bg-white rounded-2xl shadow-lg">
+          <ShoppingCart size={50} className="mx-auto mb-4 text-gray-400" />
+          <p className="text-gray-600 text-lg">Your cart is empty.</p>
+          <Link to="/" className="inline-block mt-6">
+            <button className="px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition">
+              Continue Shopping
+            </button>
+          </Link>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Cart Items */}
           <div className="md:col-span-2 space-y-6">
             {items.map((item) => (
               <div
                 key={item._id}
-                className="flex items-center gap-6 bg-white shadow-md rounded-2xl p-5"
+                className="flex items-center gap-6 bg-white shadow-md rounded-2xl p-5 hover:shadow-xl transition"
               >
+                {/* Product Image */}
                 <img
                   src={
                     item.productId.image
@@ -57,14 +73,15 @@ const CartPage = () => {
                       : "https://via.placeholder.com/150"
                   }
                   alt={item.productId.name}
-                  className="w-20 h-20 rounded-lg object-cover"
+                  className="w-24 h-24 rounded-lg object-cover border"
                 />
 
+                {/* Product Info */}
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold">
                     {item.productId.name}
                   </h3>
-                  <p className="text-gray-500">${item.productId.price}</p>
+                  <p className="text-gray-500">Rs {item.productId.price}</p>
                 </div>
 
                 {/* Quantity Controls */}
@@ -73,7 +90,7 @@ const CartPage = () => {
                     onClick={() =>
                       handleDecrease(item.productId._id, item.quantity)
                     }
-                    className="p-2 rounded-full bg-gray-200 hover:bg-gray-300"
+                    className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
                   >
                     <Minus size={16} />
                   </button>
@@ -84,7 +101,7 @@ const CartPage = () => {
                     onClick={() =>
                       handleIncrease(item.productId._id, item.quantity)
                     }
-                    className="p-2 rounded-full bg-gray-200 hover:bg-gray-300"
+                    className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
                   >
                     <Plus size={16} />
                   </button>
@@ -93,7 +110,7 @@ const CartPage = () => {
                 {/* Remove Button */}
                 <button
                   onClick={() => handleRemove(item.productId._id)}
-                  className="p-2 text-red-600 hover:text-red-800"
+                  className="p-2 text-red-600 hover:text-red-800 transition"
                 >
                   <Trash2 size={20} />
                 </button>
@@ -101,14 +118,16 @@ const CartPage = () => {
             ))}
           </div>
 
-          {/* Summary Section */}
-          <div className="bg-white shadow-md rounded-2xl p-6 h-fit">
-            <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between">
+          {/* Order Summary */}
+          <div className="bg-white shadow-lg rounded-2xl p-6 h-fit">
+            <h3 className="text-xl font-semibold mb-4 border-b pb-3 text-gray-900">
+              Order Summary
+            </h3>
+            <div className="space-y-3 text-lg">
+              <div className="flex justify-between ">
                 <span>Subtotal</span>
-                <span className="font-semibold">
-                  $
+                <span className="font-medium">
+                  Rs 
                   {items.reduce(
                     (total, item) =>
                       total + item.productId.price * item.quantity,
@@ -118,12 +137,12 @@ const CartPage = () => {
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span className="font-semibold">$5.00</span>
+                <span className="font-medium">Rs 5.00</span>
               </div>
-              <div className="flex justify-between text-lg font-bold border-t pt-3">
+              <div className="flex justify-between text-xl font-bold border-t pt-3">
                 <span>Total</span>
                 <span>
-                  $
+                  Rs 
                   {items.reduce(
                     (total, item) =>
                       total + item.productId.price * item.quantity,
@@ -132,9 +151,11 @@ const CartPage = () => {
                 </span>
               </div>
             </div>
-            <button className="w-full mt-6 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition">
-              Proceed to Checkout
-            </button>
+            <Link to="/checkout">
+              <button className="w-full mt-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition">
+                Proceed to Checkout
+              </button>
+            </Link>
           </div>
         </div>
       )}
