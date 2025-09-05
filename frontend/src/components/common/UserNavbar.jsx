@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../redux/slices/authSlice";
+import { logoutUser } from "../../redux/slices/authSlice";
 import { toast } from "react-toastify";
 
 const UserNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { token } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("token");
-    toast.success("You have been logged out!");
-    navigate("/login");
+  const handleLogout =  async () => {
+    try {
+      await dispatch(logoutUser()).unwrap();
+      toast.success("You have been logged out!");
+      navigate("/login");
+    } catch (err) {
+      toast.error("Logout failed, please try again.")
+    }
   };
 
   return (
@@ -51,7 +54,7 @@ const UserNavbar = () => {
               >
                 About
               </Link>
-              {!token ? (
+              {!user ? (
                 <Link
                   to="/login"
                   className="text-gray-700 hover:text-gray-900 font-medium transition"
@@ -98,7 +101,7 @@ const UserNavbar = () => {
 
               {/* Wishlist */}
               <Link
-                to="/wishlist"
+                to="/wish-list"
                 className="text-gray-700 hover:text-gray-900 transition"
               >
                 <svg

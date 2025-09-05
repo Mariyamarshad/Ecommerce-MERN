@@ -11,7 +11,7 @@ export const fetchProducts = createAsyncThunk(
         url: summaryApi.getProducts.url,
         method: summaryApi.getProducts.method,
       });
-      return response.data; // { success, products }
+      return response.data; // backend returns array of products
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to fetch products");
     }
@@ -27,24 +27,26 @@ export const createProduct = createAsyncThunk(
         url: summaryApi.createProduct.url,
         method: summaryApi.createProduct.method,
         data: productData,
+        withCredentials: true,
       });
-      return response.data.product; // only return the product object
+      return response.data; // backend returns product directly
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to create product");
     }
   }
 );
 
-//delete product
+// Delete product
 export const deleteProduct = createAsyncThunk(
   "products/deleteProduct",
   async (id, { rejectWithValue }) => {
     try {
       await axios({
-        url: `${summaryApi.deleteProduct.url}/${_id}`,
+        url: `${summaryApi.deleteProduct.url}/${id}`,
         method: summaryApi.deleteProduct.method,
+        withCredentials: true,
       });
-      return id; 
+      return id;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to delete product");
     }
@@ -57,11 +59,12 @@ export const updateProduct = createAsyncThunk(
   async ({ id, updatedData }, { rejectWithValue }) => {
     try {
       const res = await axios({
-        url: `${summaryApi.updateProduct.url}/${_id}`, 
+        url: `${summaryApi.updateProduct.url}/${id}`,
         method: summaryApi.updateProduct.method,
         data: updatedData,
+        withCredentials: true,
       });
-      return res.data.product; 
+      return res.data; // backend returns updated product directly
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to update product");
     }
@@ -103,9 +106,10 @@ const productsSlice = createSlice({
           p._id === action.payload._id ? action.payload : p
         );
       })
+
       // Create
       .addCase(createProduct.fulfilled, (state, action) => {
-        state.items.push(action.payload); // now this is just the product
+        state.items.push(action.payload);
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.error = action.payload;

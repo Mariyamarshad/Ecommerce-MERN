@@ -1,16 +1,22 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/slices/authSlice";
+import { logoutUser } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
+import { clearWishlist } from "../../redux/slices/wishlistSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate(); 
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login"); 
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser()).unwrap();
+      dispatch(clearWishlist());
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
 
   return (

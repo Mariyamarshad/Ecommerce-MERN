@@ -2,17 +2,12 @@ import axios from "axios";
 
 const apiCaller = async ({ url, method, data }) => {
   try {
-    const token = localStorage.getItem("token");
 
     const res = await axios({
       url,
       method,
       data,
-      headers: token
-        ? {
-            Authorization: `Bearer ${token}`,
-          }
-        : {},
+      withCredentials: true,
     });
 
     return res.data;

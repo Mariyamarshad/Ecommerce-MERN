@@ -10,6 +10,14 @@ const summaryApi = {
     url: `${backendDomain}/auth/login`,
     method: "post",
   },
+  currentUser: {
+    url: `${backendDomain}/auth/currentuser`,
+    method: "get"
+  },
+  logout: {
+    url: `${backendDomain}/auth/logout`,
+    method: "post",
+  },
 
   // Product APIs
   getProducts: {
@@ -44,6 +52,21 @@ const summaryApi = {
   }),
   deleteCartItem: (id) => ({
     url: `${backendDomain}/api/cart/${id}`,
+    method: "delete",
+  }),
+
+  //wishlist APIs
+addToWishlist: {
+    url: `${backendDomain}/api/wishlist/add`,
+    method: "post",
+  },
+  getWishlist: {
+    url: `${backendDomain}/api/wishlist`,
+    method: "get",
+  },
+  
+  deleteWishlistItem: (id) => ({
+    url: `${backendDomain}/api/wishlist/${id}`,
     method: "delete",
   }),
 };

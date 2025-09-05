@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import summaryApi from "../../Utils";
+import summaryApi from "../../utils";
 import apiCaller from "../../utils/apiCaller";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const Navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth)
 
   const handleAddToCart = async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("You need to login first!")
+    if (!user) {
+      toast.error("You need to login first!")
       Navigate("/login");
       return;
     }
@@ -25,11 +25,12 @@ const ProductDetails = () => {
         url: summaryApi.addToCart.url,
         method: summaryApi.addToCart.method,
         data: { productId: product._id, quantity: 1},
+        withCredentials: true,
       });
 
-      alert(response.message || "Added to cart!");
+      toast.success(response.message || "Added to cart!");
     } catch (error) {
-      alert(err.message || "Please login first!");
+      toast.error(err.message || "Please login first!");
     }
   }
 

@@ -20,6 +20,7 @@ import Orders from "../pages/admin/AdminOrders";
 import UserLayout from "../components/Layouts/UserLayout";
 import AdminLayout from "../components/Layouts/AdminLayout";
 import ProductDetails from "../components/Home/ProductDetails";
+import Wishlist from "../pages/user/Wishlist";
 
 const AppRoutes = () => {
   return (
@@ -34,6 +35,7 @@ const AppRoutes = () => {
         <Route path="cart-page" element={<CartPage />} />
         <Route path="checkout" element={<CheckoutPage />} />
         <Route path="invoice/:orderId" element={<Invoice />} />
+        <Route path="wish-list" element={<Wishlist />} />
       </Route>
 
       {/* Admin routes */}

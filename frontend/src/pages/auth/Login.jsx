@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../redux/slices/authSlice";
+import { fetchWishlist } from "../../redux/slices/wishlistSlice";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,12 +29,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (user && token) {
+    if (user ) {
       setMessage("Login successful ");
-
-      // store token in localStorage for persistence
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      
+      dispatch(fetchWishlist())
 
       // redirect based on role
       setTimeout(() => {
@@ -44,7 +43,7 @@ const Login = () => {
         }
       }, 1500);
     }
-  }, [user, token, navigate]);
+  }, [user, navigate]);
 
   return (
     <div>

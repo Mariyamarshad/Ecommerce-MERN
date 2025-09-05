@@ -9,7 +9,7 @@ exports.addToCart = async (req, res) => {
     let cartItem = await Cart.findOne({ userId, productId });
 
     if (cartItem) {
-      cartItem.quantity += quantity;
+      cartItem.quantity += Number(quantity);
       await cartItem.save();
     } else {
       await Cart.create({ userId, productId, quantity });
