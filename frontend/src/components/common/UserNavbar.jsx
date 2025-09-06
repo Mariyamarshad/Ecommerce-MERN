@@ -62,12 +62,19 @@ const UserNavbar = () => {
                   Login
                 </Link>
               ) : (
+                <>
+                <Link to="/user-Dashboard" 
+                className="text-gray-700 hover:text-gray-900 font-medium transition"
+                >
+                Dashboard
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="text-red-600 hover:text-red-800 font-medium transition"
                 >
                   Logout
                 </button>
+                </>
               )}
             </div>
 

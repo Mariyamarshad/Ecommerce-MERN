@@ -1,4 +1,5 @@
 const Order = require("../models/Orders");
+const Cart = require("../models/cartModel");
 
 exports.createOrder = async (req, res) => {
   try {
@@ -18,6 +19,8 @@ exports.createOrder = async (req, res) => {
     });
 
     await order.save();
+
+    await Cart.deleteMany({ userId });
 
     res.status(201).json({
       success: true,
@@ -40,5 +43,15 @@ exports.getOrderById = async (req, res) => {
     res.json(order);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch order" });
+  }
+};
+
+exports.getUserOrders = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const orders = await Order.find({ userId }).sort({ createdAt: -1 }).populate("items.productId");
+    res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch orders", error: err.message });
   }
 };

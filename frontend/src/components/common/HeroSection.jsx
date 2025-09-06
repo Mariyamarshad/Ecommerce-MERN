@@ -1,6 +1,13 @@
 import React from "react";
 
 const Hero = () => {
+const handleScrollToCategories = () => {
+  const section = document.getElementById("categories");
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth"})
+  }
+}
+
   return (
     <section className="relative flex flex-col md:flex-row items-center justify-between px-8 md:px-16 lg:px-32 py-20 bg-gradient-to-r from-gray-100 to-white">
       {/* Left Content */}
@@ -12,7 +19,7 @@ const Hero = () => {
           Shop from thousands of top brands with unbeatable prices and fast delivery.
         </p>
         <div className="mt-6 flex flex-col md:flex-row gap-4 md:gap-6 justify-center md:justify-start">
-          <button className="px-6 py-3 rounded-2xl bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
+          <button onClick={handleScrollToCategories} className="px-6 py-3 rounded-2xl bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
             Shop Now
           </button>
           <button className="px-6 py-3 rounded-2xl border border-gray-400 text-gray-700 hover:bg-gray-200 transition">

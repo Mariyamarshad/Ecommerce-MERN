@@ -69,6 +69,19 @@ addToWishlist: {
     url: `${backendDomain}/api/wishlist/${id}`,
     method: "delete",
   }),
+
+  //order APIs
+  getOrders: {
+    url: `${backendDomain}/api/order/user`,
+    method: "get",
+    withCredentials: true,
+  },
+
+  getOrderById: (id) => ({
+    url: `${backendDomain}/api/order/${id}`,
+    method: "get",
+    withCredentials: true,
+  })
 };
 
 export default summaryApi;

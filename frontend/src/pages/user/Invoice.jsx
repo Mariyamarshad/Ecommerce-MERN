@@ -14,10 +14,10 @@ const Invoice = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const token = localStorage.getItem("token");
+        
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/order/${orderId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { withCredentials: true }
         );
         setOrder(res.data);
       } catch (err) {

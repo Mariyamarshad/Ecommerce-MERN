@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { clearCart } from "../../redux/slices/cartSlice";
+import { clearCart, fetchCart } from "../../redux/slices/cartSlice";
 
 const CheckoutPage = () => {
   const { items } = useSelector((state) => state.cart);
@@ -21,7 +21,7 @@ const CheckoutPage = () => {
     (total, item) => total + item.productId.price * item.quantity,
     0
   );
-  const shipping = 200; // realistic shipping cost
+  const shipping = 200; 
   const total = subtotal + shipping;
 
   const handleChange = (e) =>
@@ -34,8 +34,8 @@ const CheckoutPage = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
+      
+      if (!user) {
         toast.error("Please login first!");
         navigate("/login");
         return;
@@ -52,12 +52,13 @@ const CheckoutPage = () => {
           shippingInfo: formData,
           total,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { withCredentials: true }
       );
       dispatch(clearCart())
+      dispatch(fetchCart());
 
       toast.success("Order placed successfully!");
-      navigate(`/invoice/${res.data._id}`); // redirect to invoice
+      navigate(`/invoice/${res.data._id}`); 
     } catch (err) {
       console.error(err);
       toast.error("Failed to place order!");

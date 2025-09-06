@@ -51,11 +51,11 @@ const Categories = () => {
   };
 
   return (
-    <section className="w-full max-w-screen-xl mx-auto my-16 px-4 ">
+    <section id="categories" className="w-full max-w-screen-xl mx-auto my-16 px-4 ">
       {/* Section Header */}
       <div className="mb-10 flex justify-between items-center">
         <div>
-          <h3 className="text-red-600 font-semibold">Categories</h3>
+         
           <h2 className="text-2xl md:text-3xl font-bold">Browse By Category</h2>
         </div>
 

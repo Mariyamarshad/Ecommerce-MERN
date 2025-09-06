@@ -1,9 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { createOrder, getOrderById } = require("../controllers/orderController");
-const authMiddleware = require("../middlewares/authMiddleware")
+const {
+  createOrder,
+  getOrderById,
+  getUserOrders, 
+} = require("../controllers/orderController");
+const authMiddleware = require("../middlewares/authMiddleware");
 
+// Create order
 router.post("/", authMiddleware, createOrder);
-router.get("/:id", authMiddleware, getOrderById); 
+
+// Fetch all orders for logged-in user
+router.get("/user", authMiddleware, getUserOrders); 
+
+// Fetch order by ID
+router.get("/:id", authMiddleware, getOrderById);
 
 module.exports = router;
