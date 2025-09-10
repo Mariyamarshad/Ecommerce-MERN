@@ -2,58 +2,50 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./config/db");
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
 
-const Authrouter = require("./routes/AuthRouter");
-const productRoutes = require("./routes/productRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes")
-const usersRoutes = require("./routes/usersRoutes")
-const cartRoutes = require("./routes/cartRoutes")
-const orderRoutes = require("./routes/orderRoutes")
-const ordersRoutes = require("./routes/ordersRoutes")
-const wishlistRoutes = require("./routes/wishlistRouter")
-
+// Routes
+const AuthRouter = require("./routes/commonROutes/AuthRouter");
+const productRoutes = require("./routes/commonROutes/productRoutes");
+const dashboardRoutes = require("./routes/adminRoutes/dashboardRoutes");
+const adminUsersRoutes = require("./routes/adminRoutes/adminUsersRoutes");
+const adminOrdersRoutes = require("./routes/adminRoutes/adminOrderRoutes");
+const userOrderRoutes = require("./routes/userRoutes/userOrderRoutes");
+const paymentRoutes = require("./routes/userRoutes/paymentRoutes");
 
 const app = express();
-
-
-// Middleware
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
+
 
 app.use(
   cors({
-    origin:[ "http://localhost:5173", "http://localhost:5174"],
+     origin: ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
   })
-)
+);
+
+app.use("/api/payment", paymentRoutes);
+
+
+
 
 // Routes
-app.use("/auth", Authrouter);
+app.use("/auth", AuthRouter);
 app.use("/api/products", productRoutes);
-app.use("/api/dashboard", dashboardRoutes)
-app.use("/api/users", usersRoutes)
-app.use("/api/cart", cartRoutes);
-app.use("/api/order", orderRoutes)
-app.use("/api/orders", ordersRoutes);
-app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/users", adminUsersRoutes);
+app.use("/api/order", userOrderRoutes);
+app.use("/api/orders", adminOrdersRoutes);
 
-// Static folder for images
 app.use("/uploads", express.static("uploads"));
-
-// Error handler (to prevent crashes)
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Something went wrong", error: err.message });
-});
 
 const PORT = process.env.PORT || 8000;
 
-// DB + Server
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`Server is running on ${PORT}`);
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((err) => {

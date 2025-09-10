@@ -1,4 +1,4 @@
-const User = require("../models/userModel");
+const User = require("../../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -7,7 +7,9 @@ const signup = async (req, res) => {
     const { name, email, password, confirmPassword, role } = req.body;
 
     if (password !== confirmPassword) {
-      return res.status(400).json({ success: false, message: "Passwords do not match" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Passwords do not match" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -29,7 +31,9 @@ const signup = async (req, res) => {
 
     await newUser.save();
 
-    res.status(201).json({ success: true, message: "User registered successfully" });
+    res
+      .status(201)
+      .json({ success: true, message: "User registered successfully" });
   } catch (error) {
     console.error("Signup Error:", error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -41,7 +45,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
-    const errorMSG = "Auth failed: email or password is wrong";
+    const errorMSG = "Login failed: email or password is wrong";
 
     if (!existingUser) {
       return res.status(403).json({ success: false, message: errorMSG });
@@ -58,11 +62,10 @@ const login = async (req, res) => {
       { expiresIn: "24h" }
     );
 
-    // ✅ Fix cookie options
     res.cookie("token", jwtToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: false,
+      sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
 

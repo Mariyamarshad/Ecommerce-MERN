@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const productController = require("../controllers/productController");
-const upload = require("../middlewares/upload");
+const productController = require("../../controllers/commonControllers/productController");
+const upload = require("../../middlewares/upload");
 
 // Get all products
 router.get("/", productController.getAllProducts);

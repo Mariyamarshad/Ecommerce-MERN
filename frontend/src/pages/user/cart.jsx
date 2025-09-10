@@ -1,41 +1,36 @@
-import {
-  fetchCart,
-  addToCart,
-  removeCartItem,
-  updateCartItem,
-} from "../../redux/slices/cartSlice";
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  removeFromCart,
+  increaseQuantity,
+  decreaseQuantity,
+} from "../../redux/slices/cartSlice";
+import { toast } from "react-toastify";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const { items, loading } = useSelector((state) => state.cart);
+  const navigate = useNavigate();
+  const { items } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (user) {
-          dispatch(fetchCart());
-    }
-  }, [dispatch, user]);
-
-  const handleIncrease = (id, qty) => {
-    dispatch(updateCartItem({ id, quantity: qty + 1 }));
+  const handleIncrease = (id) => {
+    dispatch(increaseQuantity(id));
   };
 
-  const handleDecrease = (id, qty) => {
-    if (qty > 1) {
-      dispatch(updateCartItem({ id, quantity: qty - 1 }));
-    }
+  const handleDecrease = (id) => {
+    dispatch(decreaseQuantity(id));
   };
 
   const handleRemove = (id) => {
-    dispatch(removeCartItem(id));
+    dispatch(removeFromCart(id));
   };
 
-  if (loading)
-    return <p className="text-center text-lg mt-40">Loading your cart...</p>;
+  const subtotal = items.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12 mt-36">
@@ -63,33 +58,24 @@ const CartPage = () => {
                 key={item._id}
                 className="flex items-center gap-6 bg-white shadow-md rounded-2xl p-5 hover:shadow-xl transition"
               >
-                {/* Product Image */}
                 <img
                   src={
-                    item.productId.image
-                      ? `${import.meta.env.VITE_BACKEND_URL}${
-                          item.productId.image
-                        }`
+                    item.image
+                      ? `${import.meta.env.VITE_BACKEND_URL}${item.image}`
                       : "https://via.placeholder.com/150"
                   }
-                  alt={item.productId.name}
+                  alt={item.name}
                   className="w-24 h-24 rounded-lg object-cover border"
                 />
 
-                {/* Product Info */}
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold">
-                    {item.productId.name}
-                  </h3>
-                  <p className="text-gray-500">Rs {item.productId.price}</p>
+                  <h3 className="text-lg font-semibold">{item.name}</h3>
+                  <p className="text-gray-500">Rs {item.price}</p>
                 </div>
 
-                {/* Quantity Controls */}
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() =>
-                      handleDecrease(item.productId._id, item.quantity)
-                    }
+                    onClick={() => handleDecrease(item._id)}
                     className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
                   >
                     <Minus size={16} />
@@ -98,18 +84,15 @@ const CartPage = () => {
                     {item.quantity}
                   </span>
                   <button
-                    onClick={() =>
-                      handleIncrease(item.productId._id, item.quantity)
-                    }
+                    onClick={() => handleIncrease(item._id)}
                     className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
                   >
                     <Plus size={16} />
                   </button>
                 </div>
 
-                {/* Remove Button */}
                 <button
-                  onClick={() => handleRemove(item.productId._id)}
+                  onClick={() => handleRemove(item._id)}
                   className="p-2 text-red-600 hover:text-red-800 transition"
                 >
                   <Trash2 size={20} />
@@ -126,36 +109,30 @@ const CartPage = () => {
             <div className="space-y-3 text-lg">
               <div className="flex justify-between ">
                 <span>Subtotal</span>
-                <span className="font-medium">
-                  Rs 
-                  {items.reduce(
-                    (total, item) =>
-                      total + item.productId.price * item.quantity,
-                    0
-                  )}
-                </span>
+                <span className="font-medium">Rs {subtotal}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span className="font-medium">Rs 5.00</span>
+                <span className="font-medium">Rs 200</span>
               </div>
               <div className="flex justify-between text-xl font-bold border-t pt-3">
                 <span>Total</span>
-                <span>
-                  Rs 
-                  {items.reduce(
-                    (total, item) =>
-                      total + item.productId.price * item.quantity,
-                    0
-                  ) + 5}
-                </span>
+                <span>Rs {subtotal + 200}</span>
               </div>
             </div>
-            <Link to="/checkout">
-              <button className="w-full mt-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition">
-                Proceed to Checkout
-              </button>
-            </Link>
+            <button
+              onClick={() => {
+                if (!user) {
+                  toast.error("You need to login first!");
+                  navigate("/login");
+                } else {
+                  navigate("/checkout");
+                }
+              }}
+              className="w-full mt-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+            >
+              Proceed to Checkout
+            </button>
           </div>
         </div>
       )}

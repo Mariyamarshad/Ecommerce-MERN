@@ -8,7 +8,9 @@ import Signup from "../pages/auth/Signup";
 import CategoryPage from "../pages/user/CategoryPage";
 import CartPage from "../pages/user/cart";
 import CheckoutPage from "../pages/user/CheckoutPage";
-import Invoice from "../pages/user/Invoice";
+import Contact from "../pages/user/Contact";
+import About from "../pages/user/About";
+import CancelPage from "../pages/user/cancel";
 
 // Admin pages
 import AdminDashboard from "../pages/admin/AdminDashboard";
@@ -23,6 +25,7 @@ import ProductDetails from "../components/Home/ProductDetails";
 import Wishlist from "../pages/user/Wishlist";
 import UserDashboard from "../pages/user/userDashboard";
 import OrderDetails from "../pages/user/OrderDetails";
+import SuccessPage from "../pages/user/SuccessPage";
 
 const AppRoutes = () => {
   return (
@@ -33,13 +36,16 @@ const AppRoutes = () => {
         <Route path="login" element={<Login />} />
         <Route path="sign-up" element={<Signup />} />
         <Route path="product/:id" element={<ProductDetails />} />
-        <Route path="category/:category" element={<CategoryPage />} />
+        <Route path="category/:categoryName" element={<CategoryPage />} />
         <Route path="cart-page" element={<CartPage />} />
         <Route path="checkout" element={<CheckoutPage />} />
-        <Route path="invoice/:orderId" element={<Invoice />} />
         <Route path="wish-list" element={<Wishlist />} />
         <Route path="user-dashboard" element={<UserDashboard/>} />
-               <Route path="/order/:id" element={<OrderDetails/>} />
+        <Route path="/order/:id" element={<OrderDetails/>} />
+        <Route path="/contact" element={<Contact />}  />
+        <Route path="/about" element={<About />}  />
+        <Route path="/success" element={<SuccessPage />}  />
+        <Route path="/cancel" element= {<CancelPage />}  />
 
       </Route>
       

@@ -37,39 +37,6 @@ const summaryApi = {
     method: "delete",
   }),
 
-  // Cart APIs
-  addToCart: {
-    url: `${backendDomain}/api/cart/add`,
-    method: "post",
-  },
-  getCart: {
-    url: `${backendDomain}/api/cart`,
-    method: "get",
-  },
-  updateCartItem: (id) => ({
-    url: `${backendDomain}/api/cart/${id}`,
-    method: "put",
-  }),
-  deleteCartItem: (id) => ({
-    url: `${backendDomain}/api/cart/${id}`,
-    method: "delete",
-  }),
-
-  //wishlist APIs
-addToWishlist: {
-    url: `${backendDomain}/api/wishlist/add`,
-    method: "post",
-  },
-  getWishlist: {
-    url: `${backendDomain}/api/wishlist`,
-    method: "get",
-  },
-  
-  deleteWishlistItem: (id) => ({
-    url: `${backendDomain}/api/wishlist/${id}`,
-    method: "delete",
-  }),
-
   //order APIs
   getOrders: {
     url: `${backendDomain}/api/order/user`,
@@ -81,7 +48,9 @@ addToWishlist: {
     url: `${backendDomain}/api/order/${id}`,
     method: "get",
     withCredentials: true,
-  })
+  }),
+
+  
 };
 
 export default summaryApi;

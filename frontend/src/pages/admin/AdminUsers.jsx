@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -27,10 +28,11 @@ const Users = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/users/${id}`);
-      // Update UI after delete
       setUsers(users.filter((user) => user._id !== id));
+      toast.success("User deleted successfully!")
     } catch (err) {
       console.error("Error deleting user:", err);
+      toast.error("Failed to delete user!")
     }
   };
 

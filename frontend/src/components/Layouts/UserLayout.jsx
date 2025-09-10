@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import UserNavbar from "../common/UserNavbar";
-import Footer from "../common/Footer";
+import UserNavbar from "../user/UserNavbar";
+import Footer from "../user/userFooter";
 
 const UserLayout = () => {
   return (

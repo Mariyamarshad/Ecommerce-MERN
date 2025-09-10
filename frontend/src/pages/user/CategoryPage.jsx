@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import summaryApi from "../../utils";
 import ProductList from "../../components/Home/ProductsList";
 
 const CategoryPage = () => {

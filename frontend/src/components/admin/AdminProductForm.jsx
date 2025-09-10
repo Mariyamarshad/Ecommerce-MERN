@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import summaryApi from "../../utils";
 import { X } from "lucide-react"; 
+import { toast } from "react-toastify"
 
 const AdminProductForm = ({ onProductAdded, onClose }) => {
   const [formData, setFormData] = useState({
@@ -38,7 +39,7 @@ const AdminProductForm = ({ onProductAdded, onClose }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert(" Product added successfully!");
+      toast.success(" Product added successfully!");
       onProductAdded?.();
 
       // Reset form
@@ -47,7 +48,7 @@ const AdminProductForm = ({ onProductAdded, onClose }) => {
       setPreview(null);
     } catch (error) {
       console.error("Failed to add product", error);
-      alert(" Failed to add product");
+      toast.error(" Failed to add product");
     }
   };
 

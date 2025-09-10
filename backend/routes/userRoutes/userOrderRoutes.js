@@ -4,8 +4,8 @@ const {
   createOrder,
   getOrderById,
   getUserOrders, 
-} = require("../controllers/orderController");
-const authMiddleware = require("../middlewares/authMiddleware");
+} = require("../../controllers/userControllers/userOrderController");
+const authMiddleware = require("../../middlewares/authMiddleware");
 
 // Create order
 router.post("/", authMiddleware, createOrder);

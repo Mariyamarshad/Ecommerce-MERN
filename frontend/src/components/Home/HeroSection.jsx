@@ -1,6 +1,7 @@
 import React from "react";
 
 const Hero = () => {
+  
 const handleScrollToCategories = () => {
   const section = document.getElementById("categories");
   if (section) {

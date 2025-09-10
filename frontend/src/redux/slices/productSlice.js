@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import summaryApi from "../../utils";
 
-// Fetch products
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (_, { rejectWithValue }) => {
@@ -11,7 +10,7 @@ export const fetchProducts = createAsyncThunk(
         url: summaryApi.getProducts.url,
         method: summaryApi.getProducts.method,
       });
-      return response.data; // backend returns array of products
+      return response.data; 
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to fetch products");
     }
@@ -29,7 +28,7 @@ export const createProduct = createAsyncThunk(
         data: productData,
         withCredentials: true,
       });
-      return response.data; // backend returns product directly
+      return response.data; 
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to create product");
     }
@@ -64,7 +63,7 @@ export const updateProduct = createAsyncThunk(
         data: updatedData,
         withCredentials: true,
       });
-      return res.data; // backend returns updated product directly
+      return res.data; 
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to update product");
     }
@@ -75,10 +74,18 @@ const productsSlice = createSlice({
   name: "products",
   initialState: {
     items: [],
+    filteredItems: [],
     loading: false,
     error: null,
+    searchQuery: "",
   },
-  reducers: {},
+  reducers: {
+    setSearchQuery: (state, action) => {
+      state.searchQuery = action.payload.toLowerCase();
+      state.filteredItems = state.items.filter((p) => p.name.toLowerCase().includes(state.searchQuery)
+      );
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch
@@ -89,6 +96,12 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload;
+        if (state.searchQuery) {
+          state.filteredItems = state.items.filter((p) => p.name.toLowerCase().includes(state.searchQuery)
+          );
+        } else {
+          state.filteredItems = state.items;
+        }
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
@@ -117,4 +130,5 @@ const productsSlice = createSlice({
   },
 });
 
+export const { setSearchQuery } = productsSlice.actions;
 export default productsSlice.reducer;

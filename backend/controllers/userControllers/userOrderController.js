@@ -1,15 +1,19 @@
-const Order = require("../models/Orders");
-const Cart = require("../models/cartModel");
+const Order = require("../../models/Orders");
+
 
 exports.createOrder = async (req, res) => {
   try {
-    // userId comes from token (authMiddleware)
     const userId = req.user.id;
     const { items, shippingInfo, total } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: "No items in order" });
     }
+
+    if (!shippingInfo || !shippingInfo.fullName || !shippingInfo.address || !shippingInfo.phone) {
+  return res.status(400).json({ message: "Incomplete shipping info" });
+}
+
 
     const order = new Order({
       userId,

@@ -10,17 +10,15 @@ const AdminLayout = () => {
       <Navbar />
 
       
-      <div className="flex flex-1 mt-16"> {/* mt-16 = height of navbar */}
-        {/* Sidebar */}
+      <div className="flex flex-1 mt-16"> 
+        
         <Sidebar />
 
-        {/* Main content */}
         <main className="flex-1 p-6">
           <Outlet />
         </main>
       </div>
 
-      {/* Footer */}
       <AdminFooter />
     </div>
   );

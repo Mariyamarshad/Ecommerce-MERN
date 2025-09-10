@@ -1,21 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiCaller from "../../utils/apiCaller";
-import summaryApi from "../../utils";
+import summaryApi from "../../Utils";
 
-// Fetch all orders of logged-in user
 export const fetchOrders = createAsyncThunk(
   "orders/fetchOrders",
   async () => {
-    const res = await apiCaller(summaryApi.getOrders); // backend should return user's orders
+    const res = await apiCaller(summaryApi.getOrders);
     return res; 
   }
 );
 
-//fetch single order by id
 export const fetchOrderById = createAsyncThunk(
   "orders/fetchOrderById",
   async (id) => {
-    const apiConfig = summaryApi.getOrderById(id); // returns { url, method }
+    const apiConfig = summaryApi.getOrderById(id); 
     const res = await apiCaller(apiConfig);
     return res;
   }

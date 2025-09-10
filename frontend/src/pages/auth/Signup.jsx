@@ -17,7 +17,6 @@ const SignUp = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get auth state from redux
   const { loading, error, signupSuccess } = useSelector((state) => state.auth);
 
   const [message, setMessage] = useState("");
@@ -38,7 +37,6 @@ const SignUp = () => {
       return;
     }
 
-    // Dispatch signup thunk
     dispatch(
       signupUser({
         name: data.name,
@@ -50,7 +48,6 @@ const SignUp = () => {
     );
   };
 
-  // If signup successful, navigate to login
   useEffect(() => {
     if (signupSuccess) {
       setMessage("Signup successful!");
@@ -74,7 +71,6 @@ const SignUp = () => {
               Enter your details below to get started
             </p>
 
-            {/* Message */}
             {message && (
               <p className="text-center text-green-600 font-medium mb-4">
                 {message}

@@ -1,6 +1,6 @@
-const User = require("../models/userModel");
-const Product = require("../models/productModel");
-const Order = require("../models/Orders");
+const User = require("../../models/userModel");
+const Product = require("../../models/productModel");
+const Order = require("../../models/Orders");
 
 
 // GET dashboard counts

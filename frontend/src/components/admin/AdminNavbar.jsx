@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { clearWishlist } from "../../redux/slices/wishlistSlice";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
-      dispatch(clearWishlist());
+      toast.success("You've been logged out!")
       navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);

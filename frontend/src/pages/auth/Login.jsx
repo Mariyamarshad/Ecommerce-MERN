@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../redux/slices/authSlice";
-import { fetchWishlist } from "../../redux/slices/wishlistSlice";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,14 +31,13 @@ const Login = () => {
     if (user ) {
       setMessage("Login successful ");
       
-      dispatch(fetchWishlist())
+     
 
-      // redirect based on role
       setTimeout(() => {
         if (user.role === "admin") {
           navigate("/admin");
         } else {
-          navigate("/user-dashboard");
+          navigate("/");
         }
       }, 1500);
     }

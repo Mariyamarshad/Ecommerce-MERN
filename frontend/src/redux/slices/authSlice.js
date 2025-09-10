@@ -12,7 +12,7 @@ export const loginUser = createAsyncThunk(
         { email, password },
         { withCredentials: true }
       );
-      return res.data.user; // ✅ directly return user
+      return res.data.user; 
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Login failed");
     }
@@ -32,7 +32,7 @@ export const signupUser = createAsyncThunk(
       if (!res.data.success) {
         return rejectWithValue(res.data.message);
       }
-      return res.data.user; // ✅ user returned after signup
+      return res.data.user; 
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Signup failed");
     }

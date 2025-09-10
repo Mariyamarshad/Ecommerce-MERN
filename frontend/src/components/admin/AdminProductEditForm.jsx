@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const AdminProductEditForm = ({ product, onClose, onProductUpdated }) => {
   const [formData, setFormData] = useState({
@@ -36,12 +37,12 @@ const AdminProductEditForm = ({ product, onClose, onProductUpdated }) => {
         }
       );
 
-      alert("Product updated successfully!");
+      toast.success("Product updated successfully!");
       onProductUpdated?.(); // Refresh the product list
       onClose?.(); // Close the edit form
     } catch (err) {
       console.error("Failed to update product:", err);
-      alert("Failed to update product");
+      toast.error("Failed to update product");
     }
   };
 

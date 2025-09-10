@@ -2,7 +2,6 @@ import axios from "axios";
 
 const apiCaller = async ({ url, method, data }) => {
   try {
-
     const res = await axios({
       url,
       method,

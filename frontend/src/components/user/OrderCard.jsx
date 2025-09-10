@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 const OrderCard = ({ order }) => {
   const navigate = useNavigate();
 
-  // Format date nicely
   const orderDate = new Date(order.createdAt).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
