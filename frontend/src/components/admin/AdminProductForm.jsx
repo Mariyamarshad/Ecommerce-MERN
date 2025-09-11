@@ -42,7 +42,7 @@ const AdminProductForm = ({ onProductAdded, onClose }) => {
       toast.success(" Product added successfully!");
       onProductAdded?.();
 
-      // Reset form
+      
       setFormData({ name: "", description: "", price: "", category: "", stock: "" });
       setImage(null);
       setPreview(null);

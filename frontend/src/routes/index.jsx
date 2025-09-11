@@ -44,10 +44,11 @@ const AppRoutes = () => {
         <Route path="/order/:id" element={<OrderDetails/>} />
         <Route path="/contact" element={<Contact />}  />
         <Route path="/about" element={<About />}  />
-        <Route path="/success" element={<SuccessPage />}  />
-        <Route path="/cancel" element= {<CancelPage />}  />
+       
 
       </Route>
+       <Route path="/success" element={<SuccessPage />}  />
+        <Route path="/cancel" element= {<CancelPage />}  />
       
 
       {/* Admin routes */}

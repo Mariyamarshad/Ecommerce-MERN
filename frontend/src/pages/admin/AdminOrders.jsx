@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Package, Truck, CheckCircle2, Clock } from "lucide-react"; // ✅ Icons
+import { Package, Truck, CheckCircle2, Clock, XCircle } from "lucide-react"; 
+import { toast } from "react-toastify";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -10,12 +11,8 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/orders/data`
-      );
-      const sorted = res.data.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/orders/data`);
+      const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setOrders(sorted);
       setLoading(false);
     } catch (err) {
@@ -25,29 +22,32 @@ const Orders = () => {
     }
   };
 
+  
   const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/orders/${orderId}/status`,
-        { status: newStatus }
-      );
+  try {
+    const res = await axios.put(
+      `${import.meta.env.VITE_BACKEND_URL}/api/orders/${orderId}/status`,
+      { status: newStatus }
+    );
 
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order._id === orderId ? { ...order, status: newStatus } : order
-        )
-      );
-    } catch (err) {
-      console.error("Failed to update status:", err);
-      alert("Failed to update status");
-    }
-  };
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order._id === orderId ? { ...order, status: newStatus } : order
+      )
+    );
+
+    // Use backend message
+    toast.info(res.data.message);
+  } catch (err) {
+    console.error("Failed to update status:", err);
+    toast.error("Failed to update order status");
+  }
+};
+
 
   useEffect(() => {
     fetchOrders();
   }, []);
-
-  
 
   const getStatusBadge = (status) => {
     const base =
@@ -55,6 +55,7 @@ const Orders = () => {
     if (status === "Pending") return `${base} bg-yellow-100 text-yellow-700`;
     if (status === "Shipped") return `${base} bg-red-100 text-red-700`;
     if (status === "Delivered") return `${base} bg-green-100 text-green-700`;
+    if (status === "Rejected") return `${base} bg-gray-200 text-red-600`;
     return `${base} bg-gray-100 text-gray-600`;
   };
 
@@ -70,13 +71,13 @@ const Orders = () => {
           <Package className="w-7 h-7 text-red-600" /> Orders
         </h2>
 
-        {/* Filter Buttons */}
         <div className="flex gap-3 mb-6">
           {[
             { label: "All", icon: <Package className="w-4 h-4" /> },
             { label: "Pending", icon: <Clock className="w-4 h-4" /> },
             { label: "Shipped", icon: <Truck className="w-4 h-4" /> },
             { label: "Delivered", icon: <CheckCircle2 className="w-4 h-4" /> },
+            { label: "Rejected", icon: <XCircle className="w-4 h-4" /> }, 
           ].map(({ label, icon }) => (
             <button
               key={label}
@@ -124,7 +125,7 @@ const Orders = () => {
                       </span>
                     </td>
 
-                    {/* Items (scrollable with vertical + horizontal scrollbars) */}
+                    {/* Items */}
                     <td className="px-5 py-4 max-w-[150px]">
                       <div className="max-h-20 overflow-x-auto overflow-y-auto pr-1 custom-scrollbar">
                         <ul className="space-y-1 min-w-max">
@@ -134,9 +135,7 @@ const Orders = () => {
                               className="text-xs text-gray-700 bg-gray-100 px-2 py-1 rounded-md whitespace-nowrap"
                             >
                               {item.name || item.productId?.name || "Deleted"}{" "}
-                              <span className="text-gray-500">
-                                (x{item.quantity})
-                              </span>
+                              <span className="text-gray-500">(x{item.quantity})</span>
                             </li>
                           ))}
                         </ul>
@@ -147,18 +146,12 @@ const Orders = () => {
                     <td className="px-5 py-4 text-xs text-gray-700 max-w-xs break-words">
                       {order.shippingInfo ? (
                         <div className="space-y-1">
-                          <div className="font-semibold">
-                            {order.shippingInfo.fullName}
-                          </div>
+                          <div className="font-semibold">{order.shippingInfo.fullName}</div>
                           <div>{order.shippingInfo.address}</div>
-                          <div className="text-gray-500">
-                            {order.shippingInfo.phone}
-                          </div>
+                          <div className="text-gray-500">{order.shippingInfo.phone}</div>
                         </div>
                       ) : (
-                        <div className="text-gray-400 italic">
-                          No shipping info
-                        </div>
+                        <div className="text-gray-400 italic">No shipping info</div>
                       )}
                     </td>
 
@@ -166,16 +159,22 @@ const Orders = () => {
                     <td className="px-5 py-4">
                       <select
                         value={order.status}
-                        onChange={(e) =>
-                          updateOrderStatus(order._id, e.target.value)
-                        }
-                        className={`${getStatusBadge(
-                          order.status
-                        )} border-none focus:ring-2 focus:ring-red-300 cursor-pointer`}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value;
+                          if (newStatus === "Rejected") {
+                            const confirmReject = window.confirm(
+                              "Are you sure you want to reject this order and refund the payment?"
+                            );
+                            if (!confirmReject) return;
+                          }
+                          await updateOrderStatus(order._id, newStatus);
+                        }}
+                        className={`${getStatusBadge(order.status)} border-none focus:ring-2 focus:ring-red-300 cursor-pointer`}
                       >
                         <option value="Pending">Pending</option>
                         <option value="Shipped">Shipped</option>
                         <option value="Delivered">Delivered</option>
+                        <option value="Rejected">Rejected</option>
                       </select>
                     </td>
                   </tr>

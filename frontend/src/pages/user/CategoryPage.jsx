@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductList from "../../components/Home/ProductsList";
+import axios from "axios";
 
 const CategoryPage = () => {
   const { category } = useParams();

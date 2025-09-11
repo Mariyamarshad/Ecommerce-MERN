@@ -25,6 +25,7 @@ const CartPage = () => {
 
   const handleRemove = (id) => {
     dispatch(removeFromCart(id));
+    toast.success("Item removed from cart!");
   };
 
   const subtotal = items.reduce(

@@ -4,6 +4,11 @@ import { useNavigate } from "react-router-dom";
 const OrderCard = ({ order }) => {
   const navigate = useNavigate();
 
+  // Friendly order number: Date + last 4 chars of _id
+  const orderNumber = `#${new Date(order.createdAt)
+    .toISOString()
+    .split("T")[0]}-${order._id.slice(-4).toUpperCase()}`;
+
   const orderDate = new Date(order.createdAt).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
@@ -15,7 +20,7 @@ const OrderCard = ({ order }) => {
       {/* Order Info */}
       <div>
         <h3 className="font-semibold text-lg text-gray-800">
-          Order <span className="text-gray-600">#{order._id}</span>
+          Order <span className="text-gray-600">{orderNumber}</span>
         </h3>
         <p className="text-sm text-gray-500 mt-1">Placed on {orderDate}</p>
       </div>

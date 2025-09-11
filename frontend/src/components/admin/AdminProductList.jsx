@@ -4,6 +4,7 @@ import { fetchProducts } from "../../redux/slices/productSlice";
 import axios from "axios";
 import AdminProductEditForm from "./AdminProductEditForm";
 import { Package } from "lucide-react";
+import { toast } from "react-toastify";
 
 const AdminProductList = () => {
   const dispatch = useDispatch();
@@ -20,9 +21,11 @@ const AdminProductList = () => {
       await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/api/products/${_id}`
       );
-      dispatch(fetchProducts()); // refresh products
+      dispatch(fetchProducts()); 
+      toast.success("Product deleted successfully!");
     } catch (err) {
       console.error("Error deleting product:", err);
+      toast.error("Failed to delete product.")
     }
   };
 

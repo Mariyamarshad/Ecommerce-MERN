@@ -20,34 +20,55 @@ const OrderDetails = () => {
   if (error) return <p className="text-center mt-20 text-red-500">{error}</p>;
   if (!currentOrder) return <p className="text-center mt-20">No order found</p>;
 
+  const orderNumber = `#${new Date(currentOrder.createdAt)
+    .toISOString()
+    .split("T")[0]}-${currentOrder._id.slice(-4).toUpperCase()}`;
+
+  // Status badge color mapping
+  const statusClasses = {
+    Pending: "bg-yellow-500",
+    Shipped: "bg-blue-500",
+    Delivered: "bg-green-600",
+    Rejected: "bg-red-600",
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow mt-36 space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <h2 className="text-2xl font-bold text-gray-800">
-          Order <span className="text-gray-600">#{currentOrder._id}</span>
+          Order <span className="text-gray-600">{orderNumber}</span>
         </h2>
         <span
           className={`mt-2 md:mt-0 px-4 py-1 rounded-full text-white text-sm font-medium ${
-            currentOrder.status === "Pending"
-              ? "bg-yellow-500"
-              : currentOrder.status === "Shipped"
-              ? "bg-blue-500"
-              : "bg-green-600"
+            statusClasses[currentOrder.status] || "bg-gray-500"
           }`}
         >
           {currentOrder.status}
         </span>
       </div>
 
+      {/* Refund Notice */}
+      {currentOrder.status === "Rejected" && currentOrder.paymentIntentId && (
+        <p className="mt-2 text-sm text-red-600 font-medium">
+          This order was rejected and your payment has been refunded.
+        </p>
+      )}
+
       {/* Shipping Info */}
       <div className="bg-gray-50 p-5 rounded-xl text-sm text-gray-700 space-y-1">
-        <p><strong>Recipient:</strong> {currentOrder.shippingInfo.fullName}</p>
-        <p><strong>Address:</strong> {currentOrder.shippingInfo.address}</p>
-        <p><strong>Phone:</strong> {currentOrder.shippingInfo.phone}</p>
+        <p>
+          <strong>Recipient:</strong> {currentOrder.shippingInfo.fullName}
+        </p>
+        <p>
+          <strong>Address:</strong> {currentOrder.shippingInfo.address}
+        </p>
+        <p>
+          <strong>Phone:</strong> {currentOrder.shippingInfo.phone}
+        </p>
       </div>
 
-      {/* Items */}
+      {/* Items Table */}
       <div>
         <h3 className="font-semibold text-gray-800 mb-3">Items</h3>
         <div className="overflow-x-auto">
@@ -60,25 +81,20 @@ const OrderDetails = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {currentOrder.items.map((item, idx) => {
-                const product = item.productId || {};
-                const name = product.name || "Unknown Product";
-                const price = product.price || 0;
-                return (
-                  <tr key={product._id || idx} className="text-gray-700">
-                    <td className="px-3 py-2">{name}</td>
-                    <td className="px-3 py-2 text-center">{item.quantity}</td>
-                    <td className="px-3 py-2 text-right">Rs {price * item.quantity}</td>
-                  </tr>
-                );
-              })}
+              {currentOrder.items.map((item, idx) => (
+                <tr key={item._id || idx} className="text-gray-700">
+                  <td className="px-3 py-2">{item.name || "Unknown Product"}</td>
+                  <td className="px-3 py-2 text-center">{item.quantity}</td>
+                  <td className="px-3 py-2 text-right">Rs {item.price * item.quantity}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       </div>
 
       {/* Total */}
-      <div className="flex justify-between items-center border-t pt-4 font-semibold text-gray-800 ">
+      <div className="flex justify-between items-center border-t pt-4 font-semibold text-gray-800">
         <span>Total</span>
         <span className="text-lg text-red-600">Rs {currentOrder.total}</span>
       </div>

@@ -1,42 +1,40 @@
 const Stripe = require("stripe");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const Order = require("../../models/Orders");
+const sendEmail = require("../../Utils/email");
 
-const PKR_TO_USD = 0.0036; 
-
+const PKR_TO_USD = 0.0036;
 
 exports.createCheckoutSession = async (req, res) => {
   try {
-   
-
-
     const { items, shippingInfo } = req.body;
     const userId = req.user?.id;
 
     if (!items || items.length === 0) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: "No items in cart",
-        details: "The request did not include any items to checkout." 
+        details: "The request did not include any items to checkout.",
       });
     }
 
     const mappedItems = items
-      .filter(i => i.name) 
-      .map(i => ({
+      .filter((i) => i.name)
+      .map((i) => ({
         productId: i._id || null,
         quantity: i.quantity,
-        price: i.price,  // price in PKR
+        price: i.price,
         name: i.name,
       }));
 
     if (mappedItems.length === 0) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: "No valid products in cart",
-        details: "Products must include name, price, and quantity." 
+        details: "Products must include name, price, and quantity.",
       });
     }
 
-    const totalAmountPKR = mappedItems.reduce((sum, i) => sum + i.price * i.quantity, 0) + 200;
+    const totalAmountPKR =
+      mappedItems.reduce((sum, i) => sum + i.price * i.quantity, 0) + 200;
 
     const order = await Order.create({
       userId,
@@ -46,9 +44,8 @@ exports.createCheckoutSession = async (req, res) => {
       status: "pending",
     });
 
-    
     const line_items = mappedItems.map((item) => {
-      const priceUSD = item.price * PKR_TO_USD; 
+      const priceUSD = item.price * PKR_TO_USD;
       return {
         price_data: {
           currency: "usd",
@@ -73,8 +70,9 @@ exports.createCheckoutSession = async (req, res) => {
       payment_method_types: ["card"],
       line_items,
       mode: "payment",
-      success_url: `${process.env.CLIENT_URL}/?payment=success`,
-      cancel_url: `${process.env.CLIENT_URL}/?paymentfailed`,
+      customer_email: req.user?.email || "test@example.com",
+      success_url: `${process.env.CLIENT_URL}/success`,
+      cancel_url: `${process.env.CLIENT_URL}/cancel`,
       metadata: {
         orderId: order._id.toString(),
         userId: userId?.toString(),
@@ -82,7 +80,6 @@ exports.createCheckoutSession = async (req, res) => {
     });
 
     res.json({ url: session.url });
-
   } catch (error) {
     console.error("Checkout session error:", error);
 
@@ -99,20 +96,17 @@ exports.createCheckoutSession = async (req, res) => {
   }
 };
 
-
-
 exports.webhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(
-      req.rawBody, // req.rawBody comes from express.raw() middleware
+      req.body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    console.error("Webhook signature error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -124,17 +118,56 @@ exports.webhook = async (req, res) => {
       const order = await Order.findById(orderId);
 
       if (!order) {
-        console.error("Order not found for webhook");
         return res.status(400).send("Order not found");
       }
 
       order.status = "paid";
+      order.paymentIntentId = session.payment_intent;
       await order.save();
 
-      console.log(` Order ${order._id} marked as paid`);
+      try {
+        const userEmail = session.customer_email || "customer@example.com";
+        console.log(" Sending confirmation email to:", userEmail);
+
+        const itemsHtml = order.items
+          .map(
+            (item) =>
+              `<li>${item.name} (x${item.quantity}) - ${
+                item.price * item.quantity
+              } PKR</li>`
+          )
+          .join("");
+
+        const shippingHtml = `
+  <p><strong>Shipping Info:</strong></p>
+  <p>${order.shippingInfo.address}, ${order.shippingInfo.city}</p>
+  <p>${order.shippingInfo.phone}</p>
+`;
+
+        await sendEmail(
+          userEmail,
+          userEmail,
+          "Order Confirmation",
+          "Your order has been placed successfully!",
+          `
+    <h1>Thank you for your order! </h1>
+    <p>Your order <strong>#${order._id}</strong> has been confirmed.</p>
+    <h3>Order Details:</h3>
+    <ul>${itemsHtml}</ul>
+    <p><strong>Total:</strong> ${order.total} PKR</p>
+    ${shippingHtml}
+  `
+        );
+
+        console.log(` Confirmation email sent to ${userEmail}`);
+      } catch (emailErr) {
+        console.error(" Failed to send confirmation email:", emailErr);
+      }
     } catch (err) {
       console.error(" Failed to update order after payment:", err);
     }
+  } else {
+    console.log("Ignored event type:", event.type);
   }
 
   res.json({ received: true });

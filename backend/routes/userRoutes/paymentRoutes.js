@@ -1,15 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const {createCheckoutSession, webhook } = require("../../controllers/userControllers/stripeController")
+const { createCheckoutSession, webhook } = require("../../controllers/userControllers/stripeController");
 const authMiddleware = require("../../middlewares/authMiddleware");
+const bodyParser = require("body-parser");
 
-router.post("/create-checkout-session", authMiddleware, createCheckoutSession);
+router.post("/webhook", bodyParser.raw({ type: "application/json" }), webhook);
 
-router.post(
-  "/webhook",
-  express.raw({ type: "application/json" }), 
-  webhook
-);
-
+router.post("/create-checkout-session", authMiddleware, express.json(), createCheckoutSession);
 
 module.exports = router;

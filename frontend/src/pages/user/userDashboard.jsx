@@ -31,10 +31,8 @@ const UserDashboard = () => {
       </h1>
 
       <div className="grid md:grid-cols-3 gap-8">
-        {/* Orders on Left */}
         <OrdersList orders={orders} loading={ordersLoading} />
 
-        {/* Profile on Right */}
         <ProfileCard user={user} />
       </div>
     </div>
