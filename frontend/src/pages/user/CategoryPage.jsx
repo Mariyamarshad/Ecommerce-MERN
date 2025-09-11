@@ -12,7 +12,6 @@ const CategoryPage = () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/products/category/${category}`
-
         );
         console.log("Fetched products:", res.data);
         setProducts(res.data);

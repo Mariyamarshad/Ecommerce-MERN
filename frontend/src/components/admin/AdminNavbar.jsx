@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await dispatch(logoutUser()).unwrap();
+      await dispatch(logoutUser());
       toast.success("You've been logged out!")
       navigate("/login");
     } catch (err) {

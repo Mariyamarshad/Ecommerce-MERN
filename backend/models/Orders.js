@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema({
   },
   total: { type: Number, required: true },
   status: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
+   paymentIntentId: { type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Order", orderSchema);

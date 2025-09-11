@@ -36,7 +36,6 @@ const Orders = () => {
       )
     );
 
-    // Use backend message
     toast.info(res.data.message);
   } catch (err) {
     console.error("Failed to update status:", err);

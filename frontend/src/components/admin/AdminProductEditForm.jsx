@@ -38,8 +38,8 @@ const AdminProductEditForm = ({ product, onClose, onProductUpdated }) => {
       );
 
       toast.success("Product updated successfully!");
-      onProductUpdated?.(); // Refresh the product list
-      onClose?.(); // Close the edit form
+      onProductUpdated?.(); 
+      onClose?.(); 
     } catch (err) {
       console.error("Failed to update product:", err);
       toast.error("Failed to update product");

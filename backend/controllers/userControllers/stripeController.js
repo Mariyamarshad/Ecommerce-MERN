@@ -172,3 +172,28 @@ exports.webhook = async (req, res) => {
 
   res.json({ received: true });
 };
+
+ exports.refundOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await Order.findById(orderId);
+    if (!order) return res.status(404).json({ error: "Order not found" });
+
+    if (!order.paymentIntentId) {
+      return res.status(400).json({ error: "No payment intent found for this order" });
+    }
+
+    const refund = await stripe.refunds.create({
+      payment_intent: order.paymentIntentId,
+    });
+
+   
+    await order.save();
+
+    res.json({ message: "Order refunded successfully", refund });
+  } catch (err) {
+    console.error("Refund failed:", err);
+    res.status(500).json({ error: err.message });
+  }
+};

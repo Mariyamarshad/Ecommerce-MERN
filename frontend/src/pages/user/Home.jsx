@@ -17,7 +17,7 @@ const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user, loading: authLoading  } = useSelector((state) => state.auth);
+  const { user  } = useSelector((state) => state.auth);
   const { items, loading, error } = useSelector((state) => state.products);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const Home = () => {
 
   const handleLogout = async () => {
     try {
-      await dispatch(logoutUser()).unwrap();
+      await dispatch(logoutUser());
       dispatch(clearWishlist());
     } catch (err) {
       console.error("Logout failed:" , err);

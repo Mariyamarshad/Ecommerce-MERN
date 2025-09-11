@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useEffect} from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
+import { useDispatch } from "react-redux"
+import { clearCart,  } from "../../redux/slices/cartSlice";
 
 const SuccessPage = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(clearCart());
+  }, [dispatch]);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4">
       <div className="bg-white shadow-md rounded-xl p-8 max-w-md w-full text-center">
