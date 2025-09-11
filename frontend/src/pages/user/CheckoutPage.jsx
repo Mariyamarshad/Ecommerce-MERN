@@ -12,10 +12,6 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(removeFromCart());
-  }, [dispatch])
-
   const [formData, setFormData] = useState({
     fullName: "",
     address: "",

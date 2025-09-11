@@ -22,3 +22,24 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.blockUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await Users.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isBlocked = !user.isBlocked;
+    await user.save();
+
+    res.json({
+      message: `User ${user.isBlocked ? "blocked" : "unblocked"} successfully`,
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

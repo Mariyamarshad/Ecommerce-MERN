@@ -51,6 +51,10 @@ const login = async (req, res) => {
       return res.status(403).json({ success: false, message: errorMSG });
     }
 
+    if (existingUser.isBlocked) {
+      return res.status(403).json({ message: "Your account has been blocked. Contact support"});
+    }
+
     const isPassEqual = await bcrypt.compare(password, existingUser.password);
     if (!isPassEqual) {
       return res.status(403).json({ success: false, message: errorMSG });
@@ -111,6 +115,8 @@ const logout = (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
 
 module.exports = {
   signup,
