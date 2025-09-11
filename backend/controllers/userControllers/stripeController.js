@@ -11,15 +11,12 @@ exports.createCheckoutSession = async (req, res) => {
     const userId = req.user?.id;
 
     if (!items || items.length === 0) {
-      return res.status(400).json({
-        error: "No items in cart",
-        details: "The request did not include any items to checkout.",
-      });
+      return res.status(400).json({ error: "No items in cart" });
     }
 
     const mappedItems = items
-      .filter((i) => i.name)
-      .map((i) => ({
+      .filter(i => i.name)
+      .map(i => ({
         productId: i._id || null,
         quantity: i.quantity,
         price: i.price,
@@ -27,41 +24,25 @@ exports.createCheckoutSession = async (req, res) => {
       }));
 
     if (mappedItems.length === 0) {
-      return res.status(400).json({
-        error: "No valid products in cart",
-        details: "Products must include name, price, and quantity.",
-      });
+      return res.status(400).json({ error: "No valid products in cart" });
     }
 
-    const totalAmountPKR =
-      mappedItems.reduce((sum, i) => sum + i.price * i.quantity, 0) + 200;
+    const totalAmountPKR = mappedItems.reduce((sum, i) => sum + i.price * i.quantity, 0) + 200;
 
-    const order = await Order.create({
-      userId,
-      items: mappedItems,
-      shippingInfo,
-      total: totalAmountPKR,
-      status: "pending",
-    });
+    const line_items = mappedItems.map(item => ({
+      price_data: {
+        currency: "usd",
+        product_data: { name: item.name },
+        unit_amount: Math.round(item.price * PKR_TO_USD * 100),
+      },
+      quantity: item.quantity,
+    }));
 
-    const line_items = mappedItems.map((item) => {
-      const priceUSD = item.price * PKR_TO_USD;
-      return {
-        price_data: {
-          currency: "usd",
-          product_data: { name: item.name },
-          unit_amount: Math.round(priceUSD * 100),
-        },
-        quantity: item.quantity,
-      };
-    });
-
-    const shippingUSD = 200 * PKR_TO_USD;
     line_items.push({
       price_data: {
         currency: "usd",
         product_data: { name: "Shipping" },
-        unit_amount: Math.round(shippingUSD * 100),
+        unit_amount: Math.round(200 * PKR_TO_USD * 100),
       },
       quantity: 1,
     });
@@ -74,27 +55,20 @@ exports.createCheckoutSession = async (req, res) => {
       success_url: `${process.env.CLIENT_URL}/success`,
       cancel_url: `${process.env.CLIENT_URL}/cancel`,
       metadata: {
-        orderId: order._id.toString(),
         userId: userId?.toString(),
+        cart: JSON.stringify(mappedItems),
+        shipping: JSON.stringify(shippingInfo),
       },
     });
 
     res.json({ url: session.url });
   } catch (error) {
     console.error("Checkout session error:", error);
-
-    if (error.raw) {
-      console.error("Stripe error details:", error.raw);
-    }
-
-    res.status(error.statusCode || 500).json({
-      error: error.message || "Failed to create checkout session",
-      type: error.type || "server_error",
-      details: error.raw || null,
-      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
-    });
+    res.status(error.statusCode || 500).json({ error: error.message });
   }
 };
+
+
 
 exports.webhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
@@ -110,70 +84,86 @@ exports.webhook = async (req, res) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+      const userId = session.metadata.userId;
+      const items = JSON.parse(session.metadata.cart || "[]");
+      const shippingInfo = JSON.parse(session.metadata.shipping || "{}");
 
-    try {
-      const orderId = session.metadata.orderId;
-      const order = await Order.findById(orderId);
+      const order = await Order.create({
+        userId,
+        items,
+        shippingInfo,
+        total: items.reduce((sum, i) => sum + i.price * i.quantity, 0) + 200,
+        status: "paid",
+        paymentIntentId: session.payment_intent,
+      });
 
-      if (!order) {
-        return res.status(400).send("Order not found");
-      }
+      const userEmail = session.customer_email || "customer@example.com";
 
-      order.status = "paid";
-      order.paymentIntentId = session.payment_intent;
-      await order.save();
+      const itemsHtml = order.items
+        .map(i => `<li>${i.name} (x${i.quantity}) - ${i.price * i.quantity} PKR</li>`)
+        .join("");
 
-      try {
-        const userEmail = session.customer_email || "customer@example.com";
-        console.log(" Sending confirmation email to:", userEmail);
+      const shippingHtml = `
+        <p><strong>Shipping Info:</strong></p>
+        <p>${order.shippingInfo.address}, ${order.shippingInfo.city}</p>
+        <p>${order.shippingInfo.phone}</p>
+      `;
 
-        const itemsHtml = order.items
-          .map(
-            (item) =>
-              `<li>${item.name} (x${item.quantity}) - ${
-                item.price * item.quantity
-              } PKR</li>`
-          )
-          .join("");
+      await sendEmail(
+        userEmail,
+        userEmail,
+        "Order Confirmation",
+        "Your order has been placed successfully!",
+        `
+          <h1>Thank you for your order!</h1>
+          <p>Your order <strong>#${order._id}</strong> has been confirmed.</p>
+          <h3>Order Details:</h3>
+          <ul>${itemsHtml}</ul>
+          <p><strong>Total:</strong> ${order.total} PKR</p>
+          ${shippingHtml}
+        `
+      );
 
-        const shippingHtml = `
-  <p><strong>Shipping Info:</strong></p>
-  <p>${order.shippingInfo.address}, ${order.shippingInfo.city}</p>
-  <p>${order.shippingInfo.phone}</p>
-`;
+      console.log(`Order created and email sent for order ${order._id}`);
+    }
 
+    if (event.type === "charge.refunded" || event.type === "refund.updated") {
+      const charge = event.data.object;
+      const paymentIntentId = charge.payment_intent;
+      const order = await Order.findOne({ paymentIntentId });
+
+      if (order && order.status !== "failed") {
+        order.status = "failed";
+        await order.save();
+
+        const userEmail = order.userEmail || "customer@example.com";
         await sendEmail(
           userEmail,
           userEmail,
-          "Order Confirmation",
-          "Your order has been placed successfully!",
+          "Order Refunded",
+          "Your order has been refunded",
           `
-    <h1>Thank you for your order! </h1>
-    <p>Your order <strong>#${order._id}</strong> has been confirmed.</p>
-    <h3>Order Details:</h3>
-    <ul>${itemsHtml}</ul>
-    <p><strong>Total:</strong> ${order.total} PKR</p>
-    ${shippingHtml}
-  `
+            <h1>Order Cancelled & Refunded</h1>
+            <p>Your order <strong>#${order._id}</strong> has been refunded successfully.</p>
+          `
         );
 
-        console.log(` Confirmation email sent to ${userEmail}`);
-      } catch (emailErr) {
-        console.error(" Failed to send confirmation email:", emailErr);
+        console.log(`Refund email sent to ${userEmail} for order ${order._id}`);
       }
-    } catch (err) {
-      console.error(" Failed to update order after payment:", err);
     }
-  } else {
-    console.log("Ignored event type:", event.type);
-  }
 
-  res.json({ received: true });
+    res.json({ received: true });
+  } catch (err) {
+    console.error("Webhook processing error:", err);
+    res.status(500).send("Webhook error");
+  }
 };
 
- exports.refundOrder = async (req, res) => {
+
+exports.refundOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
 
@@ -188,12 +178,25 @@ exports.webhook = async (req, res) => {
       payment_intent: order.paymentIntentId,
     });
 
-   
+    order.status = "failed"; 
     await order.save();
 
-    res.json({ message: "Order refunded successfully", refund });
+    const userEmail = req.user?.email || "customer@example.com";
+    await sendEmail(
+      userEmail,
+      userEmail,
+      "Order Refunded",
+      "Your order has been refunded",
+      `
+        <h1>Order Cancelled & Refunded</h1>
+        <p>If you have any questions, please contact support.</p>
+      `
+    );
+
+    res.json({ message: "Order refunded and user notified via email", refund });
   } catch (err) {
     console.error("Refund failed:", err);
     res.status(500).json({ error: err.message });
   }
 };
+
