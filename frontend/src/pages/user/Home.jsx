@@ -8,13 +8,9 @@ import LogoutSection from "../../components/Home/LogoutSection";
 import Categories from "../../components/Home/Categories";
 import ProductList from "../../components/Home/ProductsList";
 import { clearWishlist } from "../../redux/slices/wishlistSlice";
-import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+
 
 const Home = () => {
-
-  const location = useLocation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { user  } = useSelector((state) => state.auth);
@@ -24,18 +20,6 @@ const Home = () => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const paymentStatus = query.get("payment");
-
-    if(paymentStatus === "success") {
-      toast.success("Payment successfull!");
-      navigate("/", { replace: true})
-    } else if (paymentStatus === "failed" ) {
-      toast.error("Payment failed. Please try again.");
-      navigate("/", { replace: true});
-    }
-  }, [location, navigate])
 
   const handleLogout = async () => {
     try {

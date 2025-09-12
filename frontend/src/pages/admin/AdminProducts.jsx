@@ -5,11 +5,14 @@ import { Plus, Boxes } from "lucide-react";
 
 const AdminProducts = () => {
   const [showForm, setShowForm] = useState(false);
+
   const [refresList, setRefresList] = useState(false);
+  
   const handleProductAdded = () => {
     setRefresList((prev) => !prev);
     setShowForm(false);
   };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/*page header */}

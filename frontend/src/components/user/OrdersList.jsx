@@ -2,8 +2,6 @@ import React from "react";
 import OrderCard from "./OrderCard";
 
 const OrdersList = ({ orders, loading }) => {
-
-  
   return (
     <div className="md:col-span-2">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">

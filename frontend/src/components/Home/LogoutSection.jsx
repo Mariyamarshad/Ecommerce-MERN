@@ -1,6 +1,6 @@
 import React from "react";
 
-const LogoutSection = ({ token, user, handleLogout }) => {
+const LogoutSection = ({ user, handleLogout }) => {
   return (
     <>
       {user && user?.role === "user" ? (

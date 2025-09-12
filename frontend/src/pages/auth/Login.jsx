@@ -15,7 +15,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
 
-  const { loading, error, user, token } = useSelector((state) => state.auth);
+  const { loading, error, user} = useSelector((state) => state.auth);
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -31,8 +31,6 @@ const Login = () => {
     if (user ) {
       setMessage("Login successful ");
       
-     
-
       setTimeout(() => {
         if (user.role === "admin") {
           navigate("/admin");

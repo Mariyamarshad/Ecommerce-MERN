@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/slices/authSlice";
-import { setSearchQuery } from "../../redux/slices/productSlice";
 import { toast } from "react-toastify";
 
 const UserNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
-  const { searchQuery } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -64,8 +62,6 @@ const UserNavbar = () => {
                   type="text"
                   placeholder="What are you looking for?"
                   className="w-full rounded-lg pl-3 pr-10 py-2 bg-gray-100 focus:outline-none text-gray-900"
-                  value={searchQuery}
-                  onChange={(e) => dispatch(setSearchQuery(e.target.value))}
                 />
                 <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-900">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -120,8 +116,7 @@ const UserNavbar = () => {
                   type="text"
                   placeholder="Search..."
                   className="w-full rounded-lg pl-3 pr-10 py-2 bg-gray-100 focus:outline-none text-gray-900"
-                  value={searchQuery}
-                  onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+                  
                 />
                 <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-indigo-600">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

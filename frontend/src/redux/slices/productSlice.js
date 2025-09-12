@@ -77,15 +77,8 @@ const productsSlice = createSlice({
     filteredItems: [],
     loading: false,
     error: null,
-    searchQuery: "",
   },
-  reducers: {
-    setSearchQuery: (state, action) => {
-      state.searchQuery = action.payload.toLowerCase();
-      state.filteredItems = state.items.filter((p) => p.name.toLowerCase().includes(state.searchQuery)
-      );
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       // Fetch
@@ -96,12 +89,6 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload;
-        if (state.searchQuery) {
-          state.filteredItems = state.items.filter((p) => p.name.toLowerCase().includes(state.searchQuery)
-          );
-        } else {
-          state.filteredItems = state.items;
-        }
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
@@ -130,5 +117,4 @@ const productsSlice = createSlice({
   },
 });
 
-export const { setSearchQuery } = productsSlice.actions;
 export default productsSlice.reducer;
