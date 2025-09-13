@@ -8,7 +8,7 @@ import {
   decreaseQuantity,
 } from "../../redux/slices/cartSlice";
 import { toast } from "react-toastify";
-
+ 
 const CartPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

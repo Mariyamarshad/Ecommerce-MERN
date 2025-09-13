@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../redux/slices/authSlice";
-import { fetchProducts } from "../../redux/slices/productSlice";
+import { fetchProducts, filterProducts } from "../../redux/slices/productSlice";
 
 import Hero from "../../components/Home/HeroSection";
 import LogoutSection from "../../components/Home/LogoutSection";
@@ -15,9 +15,12 @@ const Home = () => {
 
   const { user  } = useSelector((state) => state.auth);
   const { items, loading, error } = useSelector((state) => state.products);
+  const { filteredItems } = useSelector((state) => state.products);
+
 
   useEffect(() => {
     dispatch(fetchProducts());
+     dispatch(filterProducts(""));
   }, [dispatch]);
 
 
@@ -44,7 +47,7 @@ const Home = () => {
 
         {loading && <p className="text-blue-500 ">Loading products...</p>}
         {error && <p className="text-red-500">Error: {error}</p>}
-        {!loading && !error && <ProductList products={items} />}
+        {!loading && !error && <ProductList products={filteredItems} />}
       </div>
     </div>
   );

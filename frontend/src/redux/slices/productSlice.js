@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import summaryApi from "../../Utils";
 
+// Fetch all products
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (_, { rejectWithValue }) => {
@@ -10,7 +11,7 @@ export const fetchProducts = createAsyncThunk(
         url: summaryApi.getProducts.url,
         method: summaryApi.getProducts.method,
       });
-      return response.data; 
+      return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to fetch products");
     }
@@ -28,7 +29,7 @@ export const createProduct = createAsyncThunk(
         data: productData,
         withCredentials: true,
       });
-      return response.data; 
+      return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to create product");
     }
@@ -63,7 +64,7 @@ export const updateProduct = createAsyncThunk(
         data: updatedData,
         withCredentials: true,
       });
-      return res.data; 
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to update product");
     }
@@ -74,11 +75,25 @@ const productsSlice = createSlice({
   name: "products",
   initialState: {
     items: [],
-    filteredItems: [],
+    filteredItems: [], 
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    filterProducts: (state, action) => {
+      const searchTerm = action.payload.toLowerCase();
+      if (!searchTerm) {
+        state.filteredItems = state.items; 
+      } else {
+        state.filteredItems = state.items.filter(
+          (p) =>
+            p.name.toLowerCase().includes(searchTerm) ||
+            p.description.toLowerCase().includes(searchTerm) ||
+            p.category.toLowerCase().includes(searchTerm)
+        );
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch
@@ -89,6 +104,7 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload;
+        state.filteredItems = action.payload; // ✅ initialize filtered list
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
@@ -98,6 +114,7 @@ const productsSlice = createSlice({
       // Delete
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.items = state.items.filter((p) => p._id !== action.payload);
+        state.filteredItems = state.filteredItems.filter((p) => p._id !== action.payload);
       })
 
       // Update
@@ -105,11 +122,15 @@ const productsSlice = createSlice({
         state.items = state.items.map((p) =>
           p._id === action.payload._id ? action.payload : p
         );
+        state.filteredItems = state.filteredItems.map((p) =>
+          p._id === action.payload._id ? action.payload : p
+        );
       })
 
       // Create
       .addCase(createProduct.fulfilled, (state, action) => {
         state.items.push(action.payload);
+        state.filteredItems.push(action.payload);
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.error = action.payload;
@@ -117,4 +138,5 @@ const productsSlice = createSlice({
   },
 });
 
+export const { filterProducts } = productsSlice.actions;
 export default productsSlice.reducer;
